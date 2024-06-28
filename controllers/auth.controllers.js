@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const passport = require("passport");
 
 const registerUser = async (req, res) => {
   try {
@@ -37,28 +38,25 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
-  try {
-    const { phone, password } = req.body;
-    const user = await User.findOne({ phone }).exec();
-
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
+const loginUser = async (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
     }
-
-    // check password match
-    const decodedPassword = await bcrypt.compare(password, user.password);
-
-    if (!decodedPassword) {
+    if (!user) {
       return res
         .status(400)
-        .json({ message: "Invalid credentials", status: 400 });
+        .json({ message: info ? info.message : "Login failed", status: 400 });
     }
-
-    res.status(200).json({ message: "Login successful", status: 200, user });
-  } catch (error) {
-    console.log(error);
-  }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res
+        .status(200)
+        .json({ message: "Login successful", status: 200, user });
+    });
+  })(req, res, next);
 };
 
 module.exports = { registerUser, loginUser };
