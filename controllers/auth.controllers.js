@@ -59,4 +59,21 @@ const loginUser = async (req, res, next) => {
   })(req, res, next);
 };
 
-module.exports = { registerUser, loginUser };
+const logoutUser = async (req, res) => {
+  try {
+    req.logout((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      } else {
+        return res.status(200).json({
+          message: "Logout successful",
+          status: 200,
+        });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser };
