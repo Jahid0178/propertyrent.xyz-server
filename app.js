@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 5000;
+const authRoutes = require("./routes/auth");
 
 // Middlewares
 app.use(cors());
@@ -12,6 +13,9 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+// Routes
+app.use("/auth", authRoutes);
 
 app.listen(port, () => {
   console.log(`server listening at http://localhost:${port}`);
