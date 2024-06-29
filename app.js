@@ -9,6 +9,7 @@ const MongoStore = require("connect-mongo");
 const passport = require("passport");
 const port = process.env.PORT || 5000;
 const authRoutes = require("./routes/auth");
+const usersRoute = require("./routes/usersRoute");
 
 // Middlewares
 app.use(cors());
@@ -37,6 +38,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/users", usersRoute);
 
 app.listen(port, () => {
   console.log(`server listening at http://localhost:${port}`);
