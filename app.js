@@ -40,6 +40,14 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/users", usersRoute);
 
+// Error route
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Bad request route not found",
+    status: 404,
+  });
+});
+
 app.listen(port, () => {
   console.log(`server listening at http://localhost:${port}`);
 });
