@@ -5,33 +5,47 @@ const User = require("../models/user");
 
 passport.use(
   new LocalStrategy(
-    { usernameField: "phone", passwordField: "password" },
-    async (phone, password, done) => {
+    {
+      usernameField: "phone",
+      passwordField: "password",
+    },
+    async function (phone, password, done) {
       try {
-        const user = await User.findOne({ phone }).exec();
-        const decodedPassword = await bcrypt.compare(password, user.password);
-        if (!user || !decodedPassword) {
-          return done(null, false, { message: "Invalid credentials" });
+        const foundUser = await User.findOne({ phone }).exec();
+
+        if (!foundUser) {
+          return done(null, false, { message: "User not registered" });
         }
 
-        if (decodedPassword) {
-          return done(null, user);
+        // Check if user is registered with Google
+        if (!foundUser.password) {
+          return done(null, false, {
+            message: "User registered with Google. Please use Google login.",
+          });
+        }
+
+        const passwordMatched = await bcrypt.compare(
+          password,
+          foundUser.password
+        );
+
+        if (passwordMatched) {
+          return done(null, foundUser);
+        } else {
+          return done(null, false, { message: "Wrong password" });
         }
       } catch (error) {
-        console.log("passport error", error);
         return done(error);
       }
     }
   )
 );
 
-passport.serializeUser((user, done) => {
-  done(null, user._id);
+passport.serializeUser(function (user, done) {
+  done(null, user);
 });
 
 passport.deserializeUser(async (user, done) => {
-  const userData = await User.findById(user._id).exec();
+  const userData = await User.findById(user._id);
   done(null, userData);
 });
-
-module.exports = passport;
