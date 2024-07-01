@@ -11,6 +11,7 @@ const passport = require("passport");
 const port = process.env.PORT || 5000;
 const authRoutes = require("./routes/auth");
 const usersRoute = require("./routes/usersRoute");
+const propertyListingRoute = require("./routes/propertyListing.route");
 require("./config/passport.config");
 // Middlewares
 app.use(
@@ -64,6 +65,7 @@ app.get("/users/me", (req, res) => {
 // Routes
 app.use("/auth", authRoutes);
 app.use("/users", usersRoute);
+app.use("/property-listing", propertyListingRoute);
 
 // Error route
 app.use((req, res) => {
