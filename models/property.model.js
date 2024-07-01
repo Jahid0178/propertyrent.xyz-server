@@ -55,7 +55,7 @@ const PropertySchema = new mongoose.Schema(
     propertyDetails: {
       propertyFeatures: {
         propertySize: {
-          type: Number,
+          type: String,
           required: true,
         },
         propertySizeUnit: {
@@ -63,23 +63,23 @@ const PropertySchema = new mongoose.Schema(
           required: true,
         },
         numberOfBedrooms: {
-          type: Number,
+          type: String,
           required: true,
         },
         numberOfBathrooms: {
-          type: Number,
+          type: String,
           required: true,
         },
         numberOfDiningrooms: {
-          type: Number,
+          type: String,
           required: true,
         },
         numberOfGarage: {
-          type: Number,
+          type: String,
           required: true,
         },
         numberOfBalconies: {
-          type: Number,
+          type: String,
           required: true,
         },
         renovation: {
@@ -87,61 +87,61 @@ const PropertySchema = new mongoose.Schema(
           required: true,
         },
         yearBuilt: {
-          type: Number,
+          type: String,
           required: true,
         },
       },
       propertyUtilities: {
         gas: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         electricity: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         internet: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         water: {
-          type: Boolean,
+          type: String,
           required: true,
         },
       },
       outdoorFeatures: {
         garden: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         pool: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         playground: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         fencing: {
-          type: Boolean,
+          type: String,
           required: true,
         },
       },
       nearby: {
         school: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         hospital: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         shoppingCenter: {
-          type: Boolean,
+          type: String,
           required: true,
         },
         publicTransport: {
-          type: Boolean,
+          type: String,
           required: true,
         },
       },
