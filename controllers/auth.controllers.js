@@ -4,12 +4,18 @@ const passport = require("passport");
 
 const registerUser = async (req, res) => {
   try {
-    const { phone, password, ...rest } = req.body;
+    const { phone, password, username, ...rest } = req.body;
     const isExistUser = await User.findOne({ phone }).exec();
-    console.log("existingUser", isExistUser);
 
     if (isExistUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res
+        .status(400)
+        .json({ message: "User already exists", status: 400 });
+    }
+
+    const existingUserName = await User.findOne({ username }).exec();
+    if (existingUserName) {
+      return res.status(400).json({ message: "Username already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
