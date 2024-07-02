@@ -21,6 +21,27 @@ const getAllPropertyListings = async (req, res) => {
   }
 };
 
+const getPropertyById = async (req, res) => {
+  try {
+    const propertyId = req.params.id;
+    const property = await Property.findById(propertyId)
+      .populate("images", "url")
+      .populate("author", "fullName email phone role avatar credit");
+    if (!property) {
+      return res
+        .status(404)
+        .json({ message: "Property not found", status: 404 });
+    }
+    res.status(200).json({
+      message: "Property fetched successfully",
+      status: 200,
+      property,
+    });
+  } catch (error) {
+    console.log("property fetching error", error);
+  }
+};
+
 const createPropertyListing = async (req, res) => {
   try {
     const authorId = req?.user?._id;
@@ -56,4 +77,5 @@ const createPropertyListing = async (req, res) => {
 module.exports = {
   getAllPropertyListings,
   createPropertyListing,
+  getPropertyById,
 };
