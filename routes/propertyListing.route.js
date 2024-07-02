@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../middleware/multer");
 const Property = require("../models/property.model");
+const createAsset = require("../services/asset.services");
 
 router.get("/", async (req, res) => {
   try {
@@ -20,11 +22,20 @@ router.get("/", async (req, res) => {
   } catch (error) {}
 });
 
-router.post("/", async (req, res) => {
+router.post("/", upload.array("images"), async (req, res) => {
   try {
     const authorId = req?.user?._id;
+    const files = req.files;
+    const parsedData = JSON.parse(req.body.data);
+    if (!files) {
+      return res.status(400).json({ message: "Property images not found" });
+    }
+    // Uploading property images
+    const images = await createAsset(files);
+
     const modifyData = {
-      ...req.body,
+      ...parsedData,
+      images,
       author: authorId,
     };
     const property = await Property.create(modifyData);
