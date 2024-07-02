@@ -46,7 +46,8 @@ const PropertySchema = new mongoose.Schema(
       ref: "User",
     },
     images: {
-      type: [String],
+      type: [Schema.Types.ObjectId],
+      ref: "Asset",
     },
     price: {
       type: Number,

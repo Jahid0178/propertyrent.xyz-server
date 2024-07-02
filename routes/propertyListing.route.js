@@ -6,7 +6,7 @@ const createAsset = require("../services/asset.services");
 
 router.get("/", async (req, res) => {
   try {
-    const properties = await Property.find();
+    const properties = await Property.find().populate("images", "url");
 
     if (!properties) {
       return res
