@@ -1,4 +1,5 @@
 const Property = require("../models/property.model");
+const User = require("../models/user");
 const createAsset = require("../services/asset.services");
 
 const getAllPropertyListings = async (req, res) => {
@@ -64,6 +65,16 @@ const createPropertyListing = async (req, res) => {
     }
 
     property.save();
+
+    await User.updateOne(
+      {
+        _id: authorId,
+      },
+      {
+        $push: { properties: property._id },
+      }
+    );
+
     res.status(201).json({
       message: "Property created successfully",
       status: 201,

@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Property = require("../models/property.model");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -21,7 +22,7 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("properties");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     credit: Number,
     balance: Number,
     googleId: String,
-    properties: [{ type: mongoose.Schema.Types.ObjectId, ref: "Property" }],
+    properties: [{ type: mongoose.Types.ObjectId, ref: "Property" }],
     isEmailVerified: {
       type: Boolean,
       default: false,
