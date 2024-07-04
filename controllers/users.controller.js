@@ -22,7 +22,11 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).populate("properties");
+    const user = await User.findById(id).populate({
+      path: "properties",
+      populate: { path: "author", select: "fullName avatar" },
+      populate: { path: "images", select: "url" },
+    });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
