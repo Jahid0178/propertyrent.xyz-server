@@ -28,11 +28,18 @@ const getPropertyById = async (req, res) => {
     const property = await Property.findById(propertyId)
       .populate("images", "url")
       .populate("author", "fullName email phone role avatar credit");
+
     if (!property) {
       return res
         .status(404)
         .json({ message: "Property not found", status: 404 });
     }
+
+    // Incrementing property views
+    property.views++;
+
+    await property.save();
+
     res.status(200).json({
       message: "Property fetched successfully",
       status: 200,
