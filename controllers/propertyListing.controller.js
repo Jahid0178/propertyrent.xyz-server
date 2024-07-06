@@ -92,8 +92,76 @@ const createPropertyListing = async (req, res) => {
   }
 };
 
+const getTrendingProperty = async (req, res) => {
+  try {
+    const trendingProperty = await Property.find().sort({ views: -1 }).limit(8);
+
+    if (!trendingProperty) {
+      return res
+        .status(404)
+        .json({ message: "Trending property not found", status: 404 });
+    }
+
+    res.status(200).json({
+      message: "Trending property fetched successfully",
+      status: 200,
+      count: trendingProperty.length,
+      trendingProperty,
+    });
+  } catch (error) {
+    console.log("trending property error", error);
+  }
+};
+
+const getFeaturedProperty = async (req, res) => {
+  try {
+    const featuredProperty = await Property.find({ isFeatured: true }).limit(8);
+
+    if (!featuredProperty) {
+      return res
+        .status(404)
+        .json({ message: "Featured property not found", status: 404 });
+    }
+
+    res.status(200).json({
+      message: "Featured property fetched successfully",
+      status: 200,
+      count: featuredProperty.length,
+      featuredProperty,
+    });
+  } catch (error) {
+    console.log("featured property error", error);
+  }
+};
+
+const getRecentProperty = async (req, res) => {
+  try {
+    const recentProperty = await Property.find()
+      .sort({ createAt: -1 })
+      .limit(8);
+
+    if (!recentProperty) {
+      return res
+        .status(404)
+        .json({ message: "Recent property not found", status: 404 });
+    }
+
+    res.status(200).json({
+      message: "Recent property fetched successfully",
+      status: 200,
+      count: recentProperty.length,
+      recentProperty,
+    });
+  } catch (error) {
+    console.log("recent property error", error);
+  }
+};
+
 module.exports = {
   getAllPropertyListings,
   createPropertyListing,
   getPropertyById,
+  getTrendingProperty,
+  getFeaturedProperty,
+  getRecentProperty,
 };
