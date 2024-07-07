@@ -12,6 +12,7 @@ const port = process.env.PORT || 5000;
 const authRoutes = require("./routes/auth");
 const usersRoute = require("./routes/usersRoute");
 const propertyListingRoute = require("./routes/propertyListing.route");
+const savedPropertyRoute = require("./routes/savedProperty.route");
 require("./config/passport.config");
 // Middlewares
 app.use(
@@ -66,6 +67,7 @@ app.get("/users/me", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/users", usersRoute);
 app.use("/property-listing", propertyListingRoute);
+app.use("/saved-property", savedPropertyRoute);
 
 // Error route
 app.use((req, res) => {
