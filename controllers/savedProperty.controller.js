@@ -81,8 +81,30 @@ const getSavedPropertyByUser = async (req, res) => {
   }
 };
 
+const deleteSavedProperty = async (req, res) => {
+  try {
+    const savedPropertyId = req.params.id;
+    const deletedSavedProperty = await SavedProperty.findByIdAndDelete({
+      _id: savedPropertyId,
+    });
+
+    if (!deletedSavedProperty) {
+      return res.json({
+        message: "Failed to delete saved property",
+        status: 400,
+      });
+    }
+
+    res.json({
+      message: "Saved property deleted successfully",
+      status: 200,
+    });
+  } catch (error) {}
+};
+
 module.exports = {
   getSavedProperty,
   createSavedProperty,
   getSavedPropertyByUser,
+  deleteSavedProperty,
 };
