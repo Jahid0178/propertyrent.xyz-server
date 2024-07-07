@@ -4,7 +4,9 @@ const createAsset = require("../services/asset.services");
 
 const getAllPropertyListings = async (req, res) => {
   try {
-    const properties = await Property.find().populate("images", "url");
+    const properties = await Property.find()
+      .populate("images", "url")
+      .sort({ createdAt: -1 });
 
     if (!properties) {
       return res
@@ -15,6 +17,7 @@ const getAllPropertyListings = async (req, res) => {
     res.status(200).json({
       message: "Properties fetched successfully",
       status: 200,
+      count: properties.length,
       properties,
     });
   } catch (error) {
