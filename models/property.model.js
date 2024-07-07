@@ -151,6 +151,10 @@ const PropertySchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    featuredType: {
+      type: String,
+      enum: ["listing", "trending", "recent"],
+    },
     isFeatured: {
       type: Boolean,
       default: false,

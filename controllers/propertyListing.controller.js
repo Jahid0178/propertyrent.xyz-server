@@ -65,6 +65,7 @@ const createPropertyListing = async (req, res) => {
       ...parsedData,
       images,
       author: authorId,
+      featuredType: "recent",
     };
     const property = await Property.create(modifyData);
     if (!property) {
@@ -94,7 +95,10 @@ const createPropertyListing = async (req, res) => {
 
 const getTrendingProperty = async (req, res) => {
   try {
-    const trendingProperty = await Property.find().sort({ views: -1 }).limit(8);
+    const trendingProperty = await Property.find()
+      .populate("images", "url")
+      .sort({ views: -1 })
+      .limit(8);
 
     if (!trendingProperty) {
       return res
@@ -115,9 +119,11 @@ const getTrendingProperty = async (req, res) => {
 
 const getFeaturedProperty = async (req, res) => {
   try {
-    const featuredProperty = await Property.find({ isFeatured: true }).limit(8);
+    const featuredProperties = await Property.find({ isFeatured: true })
+      .populate("images", "url")
+      .limit(8);
 
-    if (!featuredProperty) {
+    if (!featuredProperties) {
       return res
         .status(404)
         .json({ message: "Featured property not found", status: 404 });
@@ -126,8 +132,8 @@ const getFeaturedProperty = async (req, res) => {
     res.status(200).json({
       message: "Featured property fetched successfully",
       status: 200,
-      count: featuredProperty.length,
-      featuredProperty,
+      count: featuredProperties.length,
+      featuredProperties,
     });
   } catch (error) {
     console.log("featured property error", error);
@@ -136,11 +142,11 @@ const getFeaturedProperty = async (req, res) => {
 
 const getRecentProperty = async (req, res) => {
   try {
-    const recentProperty = await Property.find()
-      .sort({ createAt: -1 })
-      .limit(8);
+    const recentProperties = await Property.find()
+      .populate("images", "url")
+      .sort({ createdAt: -1 });
 
-    if (!recentProperty) {
+    if (!recentProperties) {
       return res
         .status(404)
         .json({ message: "Recent property not found", status: 404 });
@@ -149,8 +155,8 @@ const getRecentProperty = async (req, res) => {
     res.status(200).json({
       message: "Recent property fetched successfully",
       status: 200,
-      count: recentProperty.length,
-      recentProperty,
+      count: recentProperties.length,
+      recentProperties,
     });
   } catch (error) {
     console.log("recent property error", error);
