@@ -49,7 +49,40 @@ const createSavedProperty = async (req, res) => {
   }
 };
 
+const getSavedPropertyByUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const userSavedProperties = await SavedProperty.find({
+      userId: userId,
+    }).populate({
+      path: "propertyId",
+      select: "title images price propertyType listingType",
+      populate: {
+        path: "images",
+        select: "url",
+      },
+    });
+
+    if (!userSavedProperties) {
+      return res.json({
+        message: "No saved property found",
+        status: 404,
+      });
+    }
+
+    res.json({
+      message: "Get saved property by user",
+      status: 200,
+      userSavedProperties,
+    });
+  } catch (error) {
+    console.log("error from get saved property by user", error);
+  }
+};
+
 module.exports = {
   getSavedProperty,
   createSavedProperty,
+  getSavedPropertyByUser,
 };
