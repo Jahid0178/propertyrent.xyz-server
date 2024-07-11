@@ -30,9 +30,11 @@ const getAnalyticsByUserId = async (req, res) => {
   }
 };
 
-const getAnalyticsMostViewedProperty = async (req, res) => {
+const getAnalyticsMostViewedPropertyByUserId = async (req, res) => {
   try {
-    const mostViewdProperty = await Property.find()
+    const userId = req.user._id;
+
+    const mostViewdProperty = await Property.find({ author: userId })
       .populate("images", "url")
       .sort({ views: -1 });
 
@@ -49,7 +51,12 @@ const getAnalyticsMostViewedProperty = async (req, res) => {
       count: mostViewdProperty.length,
       data: mostViewdProperty,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("error from most viewed route", error);
+  }
 };
 
-module.exports = { getAnalyticsByUserId, getAnalyticsMostViewedProperty };
+module.exports = {
+  getAnalyticsByUserId,
+  getAnalyticsMostViewedPropertyByUserId,
+};
