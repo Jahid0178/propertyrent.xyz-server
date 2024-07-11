@@ -4,6 +4,7 @@ const upload = require("../middleware/multer");
 const {
   getAllPropertyListings,
   createPropertyListing,
+  updatePropertyById,
   getPropertyById,
   getTrendingProperty,
   getFeaturedProperty,
@@ -12,6 +13,7 @@ const {
 
 router.get("/", getAllPropertyListings);
 router.post("/", upload.array("images"), createPropertyListing);
+router.put("/:id", upload.array("images"), updatePropertyById);
 router.get("/trending", getTrendingProperty);
 router.get("/featured", getFeaturedProperty);
 router.get("/recent", getRecentProperty);
