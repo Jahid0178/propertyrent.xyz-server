@@ -160,6 +160,9 @@ const PropertySchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    mapLocation: {
+      coordinates: [Number],
+    },
   },
   { timestamps: true }
 );

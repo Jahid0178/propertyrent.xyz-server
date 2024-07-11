@@ -69,7 +69,11 @@ const createPropertyListing = async (req, res) => {
       images,
       author: authorId,
       featuredType: "recent",
+      mapLocation: {
+        coordinates: [parsedData.coordinates.lat, parsedData.coordinates.lng],
+      },
     };
+
     const property = await Property.create(modifyData);
     if (!property) {
       res.status(400).json({ message: "Property not created" });
