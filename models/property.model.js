@@ -48,6 +48,7 @@ const PropertySchema = new mongoose.Schema(
     images: {
       type: [Schema.Types.ObjectId],
       ref: "Asset",
+      required: false,
     },
     price: {
       type: Number,

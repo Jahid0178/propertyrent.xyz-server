@@ -96,6 +96,37 @@ const createPropertyListing = async (req, res) => {
   }
 };
 
+const updatePropertyById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const parsedData = JSON.parse(req.body.data);
+
+    // Finding property
+    const property = await Property.findById(id);
+
+    if (!property) {
+      return res.json({ message: "Property not found" });
+    }
+
+    // Updating property
+    const updatedProperty = await Property.findByIdAndUpdate(id, parsedData, {
+      new: true,
+    });
+
+    if (!updatedProperty) {
+      return res.json({ message: "Property not updated" });
+    }
+
+    res.status(200).json({
+      message: "Property updated successfully",
+      status: 200,
+      property: updatedProperty,
+    });
+  } catch (error) {
+    console.error("property updating error", error);
+  }
+};
+
 const getTrendingProperty = async (req, res) => {
   try {
     const trendingProperty = await Property.find()
@@ -169,6 +200,7 @@ const getRecentProperty = async (req, res) => {
 module.exports = {
   getAllPropertyListings,
   createPropertyListing,
+  updatePropertyById,
   getPropertyById,
   getTrendingProperty,
   getFeaturedProperty,
