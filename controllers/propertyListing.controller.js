@@ -112,6 +112,13 @@ const updatePropertyById = async (req, res) => {
       return res.json({ message: "Property not found" });
     }
 
+    const modifyData = {
+      ...parsedData,
+      mapLocation: {
+        coordinates: [parsedData.coordinates.lat, parsedData.coordinates.lng],
+      },
+    };
+    console.log("modifyData", modifyData);
     // Updating property
     const updatedProperty = await Property.findByIdAndUpdate(id, parsedData, {
       new: true,
