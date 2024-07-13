@@ -14,6 +14,7 @@ const usersRoute = require("./routes/usersRoute");
 const propertyListingRoute = require("./routes/propertyListing.route");
 const savedPropertyRoute = require("./routes/savedProperty.route");
 const analyticsRoute = require("./routes/analytics.route");
+const contactRoute = require("./routes/contact.route");
 require("./config/passport.config");
 // Middlewares
 app.use(
@@ -70,6 +71,7 @@ app.use("/users", usersRoute);
 app.use("/property-listing", propertyListingRoute);
 app.use("/saved-property", savedPropertyRoute);
 app.use("/analytics", analyticsRoute);
+app.use("/contact", contactRoute);
 
 // Error route
 app.use((req, res) => {
