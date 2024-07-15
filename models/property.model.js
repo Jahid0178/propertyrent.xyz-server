@@ -23,6 +23,10 @@ const PropertySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    availableFrom: {
+      type: Date,
+      required: true,
+    },
     address: {
       street: {
         type: String,
