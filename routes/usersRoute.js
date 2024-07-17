@@ -5,10 +5,13 @@ const {
   getAllUsers,
   getUserById,
   updateUserById,
+  uploadUserAvatar,
 } = require("../controllers/users.controller");
+const upload = require("../middleware/multer");
 
 router.get("/", getAllUsers);
 router.get("/:id", getUserById);
 router.put("/:id", updateUserById);
+router.put("/:id/avatar", upload.array("avatar"), uploadUserAvatar);
 
 module.exports = router;
