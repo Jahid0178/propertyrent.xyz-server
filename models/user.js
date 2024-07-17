@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     password: String,
-    avatar: String,
+    avatar: {
+      type: mongoose.Types.ObjectId,
+      ref: "Asset",
+    },
     role: String,
     credit: Number,
     balance: Number,
