@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Property = require("../models/property.model");
+const createAsset = require("../services/asset.services");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -22,11 +23,13 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).populate({
-      path: "properties",
-      populate: { path: "author", select: "fullName avatar" },
-      populate: { path: "images", select: "url" },
-    });
+    const user = await User.findById(id)
+      .populate({
+        path: "properties",
+        populate: { path: "author", select: "fullName avatar" },
+        populate: { path: "images", select: "url" },
+      })
+      .populate("avatar", "url");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -34,7 +37,9 @@ const getUserById = async (req, res) => {
     res
       .status(200)
       .json({ message: "User fetched successfully", status: 200, user });
-  } catch (error) {}
+  } catch (error) {
+    console.log("error from get user by id", error);
+  }
 };
 
 const updateUserById = async (req, res) => {
@@ -64,4 +69,41 @@ const updateUserById = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, getUserById, updateUserById };
+const uploadUserAvatar = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.files) {
+      return res
+        .status(400)
+        .json({ message: "Avatar image not found", status: 400 });
+    }
+
+    const userAvatar = await createAsset(req.files);
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", status: 404 });
+    }
+
+    await User.findByIdAndUpdate(
+      id,
+      {
+        avatar: userAvatar[0],
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({
+      message: "Avatar uploaded successfully",
+      status: 200,
+    });
+  } catch (error) {
+    console.log("error from upload user avatar", error);
+  }
+};
+
+module.exports = { getAllUsers, getUserById, updateUserById, uploadUserAvatar };
