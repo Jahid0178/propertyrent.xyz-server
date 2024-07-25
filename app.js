@@ -16,6 +16,7 @@ const savedPropertyRoute = require("./routes/savedProperty.route");
 const analyticsRoute = require("./routes/analytics.route");
 const contactRoute = require("./routes/contact.route");
 const creditPackageRoute = require("./routes/creditPackage.route");
+const payoutRoute = require("./routes/payout.route");
 require("./config/passport.config");
 // Middlewares
 app.use(
@@ -74,6 +75,7 @@ app.use("/saved-property", savedPropertyRoute);
 app.use("/analytics", analyticsRoute);
 app.use("/contact", contactRoute);
 app.use("/credit-package", creditPackageRoute);
+app.use("/payout", payoutRoute);
 
 // Error route
 app.use((req, res) => {
