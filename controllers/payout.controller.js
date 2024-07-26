@@ -75,6 +75,15 @@ const handleSuccessPayout = async (req, res) => {
       });
     }
 
+    await Payout.updateMany(
+      { userId: userId, status: true },
+      {
+        $set: {
+          status: false,
+        },
+      }
+    );
+
     const package = await CreditPackage.findById(packageId);
 
     const payoutData = {
@@ -112,14 +121,42 @@ const handleSuccessPayout = async (req, res) => {
     }
 
     res.redirect(process.env.CLIENT_URL);
-
-    res.status(200).json({
-      status: 200,
-      message: "Payout Completed",
-    });
   } catch (error) {
     console.log("error from success payout", error);
   }
 };
 
-module.exports = { handlePayout, handleSuccessPayout };
+const getPayoutByUserId = async (req, res) => {
+  try {
+    const params = req.params;
+
+    if (!params?.userId) {
+      return res.status(400).json({
+        status: 400,
+        message: "Missing user id",
+      });
+    }
+
+    const payouts = await Payout.find({ userId: params?.userId })
+      .populate("packageId", "packageTitle")
+      .sort({ createdAt: -1 });
+
+    if (!payouts) {
+      return res.status(404).json({
+        status: 404,
+        message: "Payout not found",
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "Payout fetched successfully",
+      count: payouts.length,
+      data: payouts,
+    });
+  } catch (error) {
+    console.log("error from get payout by user id", error);
+  }
+};
+
+module.exports = { handlePayout, handleSuccessPayout, getPayoutByUserId };
