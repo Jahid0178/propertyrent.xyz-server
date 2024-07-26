@@ -30,7 +30,14 @@ const getPropertyById = async (req, res) => {
     const propertyId = req.params.id;
     const property = await Property.findById(propertyId)
       .populate("images", "url")
-      .populate("author", "fullName email phone role avatar credit");
+      .populate({
+        path: "author",
+        select: "fullName email phone role avatar credit",
+        populate: {
+          path: "avatar",
+          select: "url",
+        },
+      });
 
     if (!property) {
       return res
