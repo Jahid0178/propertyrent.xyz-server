@@ -68,6 +68,18 @@ const createPropertyListing = async (req, res) => {
     if (!files) {
       return res.status(400).json({ message: "Property images not found" });
     }
+
+    const user = await User.findById({ _id: authorId });
+
+    const decreaseCredit = user.credit - 10;
+
+    if (decreaseCredit <= 0) {
+      return res.status(404).json({
+        message: "You don't have enough credit.",
+        status: 404,
+      });
+    }
+
     // Uploading property images
     const images = await createAsset(files);
 
@@ -94,6 +106,7 @@ const createPropertyListing = async (req, res) => {
       },
       {
         $push: { properties: property._id },
+        $set: { credit: decreaseCredit },
       }
     );
 
