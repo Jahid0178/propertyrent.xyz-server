@@ -2,6 +2,7 @@
   "name": "propertyrent-server",
   "version": "1.0.0",
   "description": "Property Rent Server",
+  "packageManager": "pnpm@9.4.0",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
