@@ -24,7 +24,12 @@ app.use(
     methods: "GET,HEAD,POST,PUT,PATCH,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
-    origin: ["http://localhost:3000"],
+    origin: [
+      "http://localhost:3000",
+      "https://propertyrent-xyz.vercel.app",
+      "https://propertyrent.xyz",
+      "http://propertyrent.xyz",
+    ],
     credentials: true,
   })
 );
