@@ -30,6 +30,7 @@ app.use(
       "https://www.propertyrent.xyz",
       "http://www.propertyrent.xyz",
       "https://whispering-astrix-zahidulhaque-b14536c1.koyeb.app",
+      "http://localhost:5173",
     ],
     credentials: true,
   })
