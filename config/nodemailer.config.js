@@ -35,7 +35,30 @@ function contactWithUs(details) {
   });
 }
 
+function notifyMe(details) {
+  const { name, email } = details;
+  const mailOptions = {
+    from: email,
+    to: process.env.ADMIN_CONTACT_EMAIL,
+    subject: `New User Interest: ${name} Wants to Stay Updated`,
+    text: `
+      Name: ${name}
+      Email: ${email}
+    `,
+  };
+
+  transport.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log("error from contact with us", error);
+    }
+
+    console.log("Email sent: %s", info);
+    return info;
+  });
+}
+
 module.exports = {
   transport,
   contactWithUs,
+  notifyMe,
 };
