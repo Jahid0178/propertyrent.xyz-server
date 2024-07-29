@@ -27,8 +27,8 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://propertyrent-xyz.vercel.app",
-      "https://propertyrent.xyz",
-      "http://propertyrent.xyz",
+      "https://www.propertyrent.xyz",
+      "http://www.propertyrent.xyz",
       "https://whispering-astrix-zahidulhaque-b14536c1.koyeb.app",
     ],
     credentials: true,
