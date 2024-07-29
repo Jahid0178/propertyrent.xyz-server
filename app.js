@@ -29,6 +29,7 @@ app.use(
       "https://propertyrent-xyz.vercel.app",
       "https://propertyrent.xyz",
       "http://propertyrent.xyz",
+      "https://whispering-astrix-zahidulhaque-b14536c1.koyeb.app",
     ],
     credentials: true,
   })
