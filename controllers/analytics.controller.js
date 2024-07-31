@@ -56,7 +56,35 @@ const getAnalyticsMostViewedPropertyByUserId = async (req, res) => {
   }
 };
 
+const getChartAnalyticsByUserId = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const allProperties = await Property.find({ author: userId }).populate(
+      "images",
+      "url"
+    );
+
+    if (!allProperties) {
+      return res.json({
+        message: "Most viewed property not found",
+        status: 404,
+      });
+    }
+
+    res.json({
+      message: "Most viewed property fetched successfully",
+      status: 200,
+      count: allProperties.length,
+      data: allProperties,
+    });
+  } catch (error) {
+    console.log("error from get chart analytics", error);
+  }
+};
+
 module.exports = {
   getAnalyticsByUserId,
   getAnalyticsMostViewedPropertyByUserId,
+  getChartAnalyticsByUserId,
 };
