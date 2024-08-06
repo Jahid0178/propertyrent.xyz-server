@@ -55,14 +55,16 @@ const getSavedPropertyByUser = async (req, res) => {
 
     const userSavedProperties = await SavedProperty.find({
       userId: userId,
-    }).populate({
-      path: "propertyId",
-      select: "title images price propertyType listingType",
-      populate: {
-        path: "images",
-        select: "url",
-      },
-    });
+    })
+      .populate({
+        path: "propertyId",
+        select: "title images price propertyType listingType",
+        populate: {
+          path: "images",
+          select: "url",
+        },
+      })
+      .sort({ createdAt: -1 });
 
     if (!userSavedProperties) {
       return res.json({
