@@ -228,6 +228,37 @@ const getRecentProperty = async (req, res) => {
   }
 };
 
+const getPropertyByLocation = async (req, res) => {
+  try {
+    const { city, upazilla } = req.params;
+
+    const searchQuery = {
+      "address.city": city,
+      ...(upazilla && { "address.upazilla": upazilla }),
+    };
+
+    const queryProperty = await Property.find(searchQuery)
+      .populate("images", "url")
+      .sort({ createdAt: -1 });
+
+    if (!queryProperty) {
+      return res.status(404).json({
+        message: "Query properties not found",
+        status: 404,
+      });
+    }
+
+    res.status(200).json({
+      message: "Property fetched successfully",
+      status: 200,
+      count: queryProperty.length,
+      data: queryProperty,
+    });
+  } catch (error) {
+    console.log("Property query error", error);
+  }
+};
+
 module.exports = {
   getAllPropertyListings,
   createPropertyListing,
@@ -236,4 +267,5 @@ module.exports = {
   getTrendingProperty,
   getFeaturedProperty,
   getRecentProperty,
+  getPropertyByLocation,
 };
