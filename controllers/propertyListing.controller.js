@@ -4,7 +4,19 @@ const createAsset = require("../services/asset.services");
 
 const getAllPropertyListings = async (req, res) => {
   try {
-    const properties = await Property.find()
+    let queryOptions = {};
+
+    if (req.query) {
+      queryOptions = {
+        ...(req.query.propertyType && { propertyType: req.query.propertyType }),
+        ...(req.query.city && { "address.city": req.query.city }),
+        ...(req.query.listingType && { listingType: req.query.listingType }),
+        ...(req.query.minPrice && { price: { $gte: req.query.minPrice } }),
+        ...(req.query.maxPrice && { price: { $lte: req.query.maxPrice } }),
+      };
+    }
+
+    const properties = await Property.find(queryOptions)
       .populate("images", "url")
       .sort({ createdAt: -1 });
 
