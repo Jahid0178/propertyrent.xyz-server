@@ -9,6 +9,7 @@ const {
   getTrendingProperty,
   getFeaturedProperty,
   getRecentProperty,
+  getPropertyByLocation,
 } = require("../controllers/propertyListing.controller");
 
 router.get("/", getAllPropertyListings);
@@ -17,6 +18,7 @@ router.put("/:id", upload.array("images"), updatePropertyById);
 router.get("/trending", getTrendingProperty);
 router.get("/featured", getFeaturedProperty);
 router.get("/recent", getRecentProperty);
+router.get("/search/:city/:upazilla?", getPropertyByLocation);
 router.get("/:id", getPropertyById);
 
 module.exports = router;
