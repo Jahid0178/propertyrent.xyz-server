@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const PropertySchema = new mongoose.Schema(
   {
+    puid: {
+      type: String,
+      trim: true,
+    },
     title: {
       type: String,
       required: true,
@@ -82,15 +86,12 @@ const PropertySchema = new mongoose.Schema(
         },
         numberOfDiningrooms: {
           type: String,
-          required: true,
         },
         numberOfGarage: {
           type: String,
-          required: true,
         },
         numberOfBalconies: {
           type: String,
-          required: true,
         },
         renovation: {
           type: String,
@@ -115,42 +116,6 @@ const PropertySchema = new mongoose.Schema(
           required: true,
         },
         water: {
-          type: String,
-          required: true,
-        },
-      },
-      outdoorFeatures: {
-        garden: {
-          type: String,
-          required: true,
-        },
-        pool: {
-          type: String,
-          required: true,
-        },
-        playground: {
-          type: String,
-          required: true,
-        },
-        fencing: {
-          type: String,
-          required: true,
-        },
-      },
-      nearby: {
-        school: {
-          type: String,
-          required: true,
-        },
-        hospital: {
-          type: String,
-          required: true,
-        },
-        shoppingCenter: {
-          type: String,
-          required: true,
-        },
-        publicTransport: {
           type: String,
           required: true,
         },
