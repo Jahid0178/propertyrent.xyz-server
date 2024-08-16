@@ -1,6 +1,7 @@
 const Property = require("../models/property.model");
 const User = require("../models/user");
 const createAsset = require("../services/asset.services");
+const generateCustomId = require("../utils/generateCustomId");
 
 const getAllPropertyListings = async (req, res) => {
   try {
@@ -95,7 +96,11 @@ const createPropertyListing = async (req, res) => {
     // Uploading property images
     const images = await createAsset(files);
 
+    // Property unique id
+    const puid = generateCustomId("PR");
+
     const modifyData = {
+      puid,
       ...parsedData,
       images,
       author: authorId,
