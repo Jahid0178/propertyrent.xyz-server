@@ -14,6 +14,17 @@ const getAllPropertyListings = async (req, res) => {
         ...(req.query.listingType && { listingType: req.query.listingType }),
         ...(req.query.minPrice && { price: { $gte: req.query.minPrice } }),
         ...(req.query.maxPrice && { price: { $lte: req.query.maxPrice } }),
+        ...(req.query.yearBuild && {
+          "propertyDetails.propertyFeatures.yearBuilt": req.query.yearBuild,
+        }),
+        ...(req.query.numberOfBedrooms && {
+          "propertyDetails.propertyFeatures.numberOfBedrooms":
+            req.query.numberOfBedrooms,
+        }),
+        ...(req.query.numberOfBathrooms && {
+          "propertyDetails.propertyFeatures.numberOfBathrooms":
+            req.query.numberOfBathrooms,
+        }),
       };
     }
 
