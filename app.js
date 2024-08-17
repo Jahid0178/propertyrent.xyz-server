@@ -56,7 +56,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Server is up and running...");
 });
 
 app.get("/users/me", (req, res) => {
