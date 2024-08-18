@@ -2,9 +2,18 @@ const Property = require("../models/property.model");
 const User = require("../models/user");
 const createAsset = require("../services/asset.services");
 const generateCustomId = require("../utils/generateCustomId");
+const paginatedResult = require("../utils/paginatedResult");
 
 const getAllPropertyListings = async (req, res) => {
   try {
+    const option = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.limit),
+    };
+    const { page, limit, skip } = paginatedResult(option);
+
+    const totalDocuments = await Property.countDocuments();
+
     let queryOptions = {};
 
     if (req.query) {
@@ -28,7 +37,10 @@ const getAllPropertyListings = async (req, res) => {
       };
     }
 
-    const properties = await Property.find(queryOptions)
+    const properties = await Property.find(queryOptions, null, {
+      skip,
+      limit,
+    })
       .populate("images", "url")
       .sort({ createdAt: -1 });
 
@@ -43,6 +55,7 @@ const getAllPropertyListings = async (req, res) => {
       status: 200,
       count: properties.length,
       properties,
+      meta: { page, limit, total: totalDocuments },
     });
   } catch (error) {
     console.log("property fetching error", error);
