@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: mongoose.Types.ObjectId,
       ref: "Asset",
+      default: null,
     },
     role: String,
     credit: Number,
