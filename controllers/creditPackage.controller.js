@@ -35,6 +35,8 @@ const createCreditPackage = async (req, res) => {
       });
     }
 
+    await createdCreditPackage.save();
+
     res.json({
       message: "Credit package created successfully",
       status: 200,
