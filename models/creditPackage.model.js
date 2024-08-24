@@ -4,7 +4,11 @@ const Schema = mongoose.Schema;
 const creditPackageSchema = new Schema(
   {
     packageTitle: String,
-    creditTitle: String,
+    packageType: {
+      type: String,
+      enum: ["basic", "standard", "premium"],
+      lowercase: true,
+    },
     price: Number,
     currency: String,
     features: [String],
