@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     role: String,
     credit: Number,
+    package: { type: mongoose.Types.ObjectId, ref: "CreditPackage" },
     balance: Number,
     googleId: String,
     properties: [{ type: mongoose.Types.ObjectId, ref: "Property" }],

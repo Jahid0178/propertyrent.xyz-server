@@ -29,7 +29,8 @@ const getUserById = async (req, res) => {
         populate: { path: "author", select: "fullName avatar" },
         populate: { path: "images", select: "url" },
       })
-      .populate("avatar", "url");
+      .populate("avatar", "url")
+      .populate("package", "packageTitle price currency packageType -_id");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
