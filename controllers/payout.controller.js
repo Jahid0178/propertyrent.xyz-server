@@ -108,6 +108,7 @@ const handleSuccessPayout = async (req, res) => {
       {
         $set: {
           credit: package.price,
+          package: package._id,
         },
       },
       { new: true }
