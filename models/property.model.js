@@ -136,6 +136,10 @@ const PropertySchema = new mongoose.Schema(
     mapLocation: {
       coordinates: [Number],
     },
+    expiresAt: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: true }
 );
