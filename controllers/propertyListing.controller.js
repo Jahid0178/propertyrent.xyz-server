@@ -110,9 +110,8 @@ const createPropertyListing = async (req, res) => {
       "packageTitle price currency packageType -_id"
     );
 
-    const { listingPrice, expiresAt, maxListings } = calculateListingDetails(
-      user?.package?.packageType
-    );
+    const { listingPrice, expiresAt, maxListings, visibility } =
+      calculateListingDetails(user?.package?.packageType);
 
     if (user?.properties?.length >= maxListings) {
       return res
@@ -136,6 +135,7 @@ const createPropertyListing = async (req, res) => {
       images,
       author: authorId,
       featuredType: "recent",
+      visibility,
       expiresAt,
       mapLocation: {
         coordinates: [parsedData.coordinates.lat, parsedData.coordinates.lng],
