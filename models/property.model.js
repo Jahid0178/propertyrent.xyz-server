@@ -31,6 +31,11 @@ const PropertySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    visibility: {
+      type: String,
+      enum: ["standard", "enhanced", "top-spot"],
+      default: "standard",
+    },
     address: {
       street: {
         type: String,
