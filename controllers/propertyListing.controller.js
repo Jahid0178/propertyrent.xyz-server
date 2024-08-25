@@ -3,6 +3,8 @@ const User = require("../models/user");
 const createAsset = require("../services/asset.services");
 const generateCustomId = require("../utils/generateCustomId");
 const paginatedResult = require("../utils/paginatedResult");
+const { calculateListingDetails } = require("../utils/listingUtils");
+const cron = require("node-cron");
 
 const getAllPropertyListings = async (req, res) => {
   try {
@@ -102,19 +104,24 @@ const createPropertyListing = async (req, res) => {
     const authorId = req?.user?._id;
     const files = req.files;
     const parsedData = JSON.parse(req.body.data);
-    if (!files) {
-      return res.status(400).json({ message: "Property images not found" });
+
+    const user = await User.findById({ _id: authorId }).populate(
+      "package",
+      "packageTitle price currency packageType -_id"
+    );
+
+    const { listingPrice, expiresAt, maxListings } = calculateListingDetails(
+      user?.package?.packageType
+    );
+
+    if (user?.properties?.length >= maxListings) {
+      return res
+        .status(400)
+        .json({ message: "You have reached the maximum listings limit" });
     }
 
-    const user = await User.findById({ _id: authorId });
-
-    const decreaseCredit = user.credit - 10;
-
-    if (decreaseCredit <= 0) {
-      return res.status(404).json({
-        message: "You don't have enough credit.",
-        status: 404,
-      });
+    if (!files) {
+      return res.status(400).json({ message: "Property images not found" });
     }
 
     // Uploading property images
@@ -129,6 +136,7 @@ const createPropertyListing = async (req, res) => {
       images,
       author: authorId,
       featuredType: "recent",
+      expiresAt,
       mapLocation: {
         coordinates: [parsedData.coordinates.lat, parsedData.coordinates.lng],
       },
@@ -139,7 +147,7 @@ const createPropertyListing = async (req, res) => {
       res.status(400).json({ message: "Property not created" });
     }
 
-    property.save();
+    await property.save();
 
     await User.updateOne(
       {
@@ -147,7 +155,6 @@ const createPropertyListing = async (req, res) => {
       },
       {
         $push: { properties: property._id },
-        $set: { credit: decreaseCredit },
       }
     );
 
@@ -299,6 +306,12 @@ const getPropertyByLocation = async (req, res) => {
     console.log("Property query error", error);
   }
 };
+
+// Delete expired properties
+cron.schedule("0 0 * * *", async () => {
+  const now = new Date();
+  await Property.deleteMany({ expiresAt: { $lt: now } });
+});
 
 module.exports = {
   getAllPropertyListings,
