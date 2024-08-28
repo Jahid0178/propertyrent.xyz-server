@@ -48,6 +48,11 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async (user, done) => {
   const userData = await User.findById(user._id)
     .populate("avatar", "url")
-    .populate("currentPlan");
+    .populate({
+      path: "currentPlan",
+      populate: {
+        path: "packageId",
+      },
+    });
   done(null, userData);
 });
