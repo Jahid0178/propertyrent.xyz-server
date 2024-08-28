@@ -46,6 +46,8 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async (user, done) => {
-  const userData = await User.findById(user._id).populate("avatar", "url");
+  const userData = await User.findById(user._id)
+    .populate("avatar", "url")
+    .populate("currentPlan");
   done(null, userData);
 });
