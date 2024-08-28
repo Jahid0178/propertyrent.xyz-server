@@ -136,6 +136,7 @@ const createPropertyListing = async (req, res) => {
       author: authorId,
       featuredType: "recent",
       visibility,
+      status: true,
       expiresAt,
       mapLocation: {
         coordinates: [parsedData.coordinates.lat, parsedData.coordinates.lng],
@@ -232,7 +233,7 @@ const getTrendingProperty = async (req, res) => {
 
 const getFeaturedProperty = async (req, res) => {
   try {
-    const featuredProperties = await Property.find({ isFeatured: true })
+    const featuredProperties = await Property.find({ visibility: "top-spot" })
       .populate("images", "url")
       .limit(8);
 
@@ -307,10 +308,10 @@ const getPropertyByLocation = async (req, res) => {
   }
 };
 
-// Delete expired properties
+// Status change when property is expired
 cron.schedule("0 0 * * *", async () => {
   const now = new Date();
-  await Property.deleteMany({ expiresAt: { $lt: now } });
+  await Property.updateMany({ status: false, expiresAt: { $lt: now } });
 });
 
 module.exports = {
