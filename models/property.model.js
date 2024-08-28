@@ -36,6 +36,10 @@ const PropertySchema = new mongoose.Schema(
       enum: ["standard", "enhanced", "top-spot"],
       default: "standard",
     },
+    status: {
+      type: Boolean,
+      default: false,
+    },
     address: {
       street: {
         type: String,
