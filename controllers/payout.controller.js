@@ -3,6 +3,8 @@ const SSLCommerzPayment = require("sslcommerz-lts");
 const CreditPackage = require("../models/creditPackage.model");
 const Payout = require("../models/payout.model");
 const User = require("../models/user");
+const cron = require("node-cron");
+const { calculateListingDetails } = require("../utils/listingUtils");
 
 const store_id = process.env.SSL_STORE_ID;
 const store_pass = process.env.SSL_STORE_PASSWORD;
@@ -85,6 +87,7 @@ const handleSuccessPayout = async (req, res) => {
     );
 
     const package = await CreditPackage.findById(packageId);
+    const { expiresAt } = calculateListingDetails(package.packageType);
 
     const payoutData = {
       tranId: tranId,
@@ -92,6 +95,7 @@ const handleSuccessPayout = async (req, res) => {
       packageId: packageId,
       amount: package.price,
       status: true,
+      expiresAt,
     };
 
     const payoutResponse = await Payout.create(payoutData);
@@ -109,6 +113,7 @@ const handleSuccessPayout = async (req, res) => {
         $set: {
           credit: package.price,
           package: package._id,
+          currentPlan: payoutResponse._id,
         },
       },
       { new: true }
@@ -159,5 +164,23 @@ const getPayoutByUserId = async (req, res) => {
     console.log("error from get payout by user id", error);
   }
 };
+
+// Deactive user payouts when they are expired
+cron.schedule("0 0 * * *", async () => {
+  try {
+    const now = new Date();
+    const usersWithExpiredPayouts = await Payout.find({
+      expiresAt: { $lt: now },
+      status: true,
+    });
+
+    for (const userExpiredPayout of usersWithExpiredPayouts) {
+      userExpiredPayout.status = false;
+      await userExpiredPayout.save();
+    }
+  } catch (error) {
+    console.log("payout error", error);
+  }
+});
 
 module.exports = { handlePayout, handleSuccessPayout, getPayoutByUserId };

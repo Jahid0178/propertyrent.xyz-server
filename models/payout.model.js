@@ -20,6 +20,9 @@ const PayoutSchema = new Schema(
     status: {
       type: Boolean,
     },
+    expiresAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
