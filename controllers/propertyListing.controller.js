@@ -71,10 +71,15 @@ const getPropertyById = async (req, res) => {
       .populate("images", "url")
       .populate({
         path: "author",
-        select: "fullName email phone role avatar credit",
+        select:
+          "fullName email phone role avatar credit isEmailVerified isPhoneVerified isBanned package currentPlan",
         populate: {
           path: "avatar",
           select: "url",
+        },
+        populate: {
+          path: "currentPlan",
+          select: "status -_id",
         },
       });
 
