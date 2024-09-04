@@ -107,8 +107,8 @@ const getPropertyById = async (req, res) => {
 const createPropertyListing = async (req, res) => {
   try {
     const authorId = req?.user?._id;
-    const files = req.files;
-    const parsedData = JSON.parse(req.body.data);
+    const body = req.body;
+    const { images, ...rest } = body;
 
     const user = await User.findById({ _id: authorId }).populate(
       "package",
@@ -124,27 +124,22 @@ const createPropertyListing = async (req, res) => {
         .json({ message: "You have reached the maximum listings limit" });
     }
 
-    if (!files) {
-      return res.status(400).json({ message: "Property images not found" });
-    }
-
-    // Uploading property images
-    const images = await createAsset(files);
-
     // Property unique id
     const puid = generateCustomId("PR");
 
     const modifyData = {
       puid,
-      ...parsedData,
-      images,
+      ...rest,
       author: authorId,
       featuredType: "recent",
       visibility,
       status: true,
       expiresAt,
       mapLocation: {
-        coordinates: [parsedData.coordinates.lat, parsedData.coordinates.lng],
+        coordinates: [
+          body.mapLocation.coordinates[0],
+          body.mapLocation.coordinates[1],
+        ],
       },
     };
 
@@ -171,6 +166,53 @@ const createPropertyListing = async (req, res) => {
     });
   } catch (error) {
     console.error("property creating error", error);
+  }
+};
+
+const uploadPropertyListingImages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const files = req.files;
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ message: "No property images provided" });
+    }
+
+    const property = await Property.findById(id);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    const images = await createAsset(files);
+
+    const updatedProperty = await Property.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          images,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!updatedProperty) {
+      return res.status(400).json({ message: "Property image not uploaded" });
+    }
+
+    res.status(200).json({
+      message: "Property image uploaded successfully",
+      status: 200,
+      data: updatedProperty,
+    });
+  } catch (error) {
+    console.error("property image uploading error", error);
+    return res.status(500).json({
+      message: "An error occurred while uploading property images",
+      error: error.message,
+    });
   }
 };
 
@@ -328,4 +370,5 @@ module.exports = {
   getFeaturedProperty,
   getRecentProperty,
   getPropertyByLocation,
+  uploadPropertyListingImages,
 };
