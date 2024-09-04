@@ -10,10 +10,12 @@ const {
   getFeaturedProperty,
   getRecentProperty,
   getPropertyByLocation,
+  uploadPropertyListingImages,
 } = require("../controllers/propertyListing.controller");
 
 router.get("/", getAllPropertyListings);
-router.post("/", upload.array("images"), createPropertyListing);
+router.post("/", createPropertyListing);
+router.put("/:id/images", upload.array("images"), uploadPropertyListingImages);
 router.put("/:id", upload.array("images"), updatePropertyById);
 router.get("/trending", getTrendingProperty);
 router.get("/featured", getFeaturedProperty);
