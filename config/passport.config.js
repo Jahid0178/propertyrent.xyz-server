@@ -42,7 +42,11 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
-  done(null, user);
+  const userSerializedData = {
+    _id: user?._id,
+    username: user?.username,
+  };
+  done(null, userSerializedData);
 });
 
 passport.deserializeUser(async (user, done) => {
