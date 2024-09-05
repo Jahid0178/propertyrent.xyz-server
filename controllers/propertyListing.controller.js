@@ -358,7 +358,17 @@ const getPropertyByLocation = async (req, res) => {
 // Status change when property is expired
 cron.schedule("0 0 * * *", async () => {
   const now = new Date();
-  await Property.updateMany({ status: false, expiresAt: { $lt: now } });
+  await Property.updateMany(
+    {
+      status: true,
+      expiresAt: { $lt: now },
+    },
+    {
+      $set: {
+        status: false,
+      },
+    }
+  );
 });
 
 module.exports = {

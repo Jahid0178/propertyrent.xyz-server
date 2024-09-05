@@ -169,15 +169,17 @@ const getPayoutByUserId = async (req, res) => {
 cron.schedule("0 0 * * *", async () => {
   try {
     const now = new Date();
-    const usersWithExpiredPayouts = await Payout.find({
-      expiresAt: { $lt: now },
-      status: true,
-    });
-
-    for (const userExpiredPayout of usersWithExpiredPayouts) {
-      userExpiredPayout.status = false;
-      await userExpiredPayout.save();
-    }
+    await Payout.updateMany(
+      {
+        expiresAt: { $lt: now },
+        status: true,
+      },
+      {
+        $set: {
+          status: false,
+        },
+      }
+    );
   } catch (error) {
     console.log("payout error", error);
   }
