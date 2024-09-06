@@ -115,7 +115,7 @@ const createPropertyListing = async (req, res) => {
       "packageTitle price currency packageType -_id"
     );
 
-    const { listingPrice, expiresAt, maxListings, visibility } =
+    const { listingPrice, expiresAt, maxListings, visibility, isFeatured } =
       calculateListingDetails(user?.package?.packageType);
 
     if (user?.properties?.length >= maxListings) {
@@ -134,6 +134,7 @@ const createPropertyListing = async (req, res) => {
       featuredType: "recent",
       visibility,
       status: true,
+      isFeatured,
       expiresAt,
       mapLocation: {
         coordinates: [
@@ -282,7 +283,8 @@ const getFeaturedProperty = async (req, res) => {
   try {
     const featuredProperties = await Property.find({ visibility: "top-spot" })
       .populate("images", "url")
-      .limit(8);
+      .limit(8)
+      .sort({ createdAt: -1 });
 
     if (!featuredProperties) {
       return res
