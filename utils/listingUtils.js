@@ -22,18 +22,21 @@ const calculateListingDetails = (packageType) => {
       durationDays = BASIC_DURATION_DAYS;
       maxListings = BASIC_MAX_LISTINGS;
       visibility = BASIC_VISIBILITY;
+      isFeatured = false;
       break;
     case "standard":
       listingPrice = STANDARD_LISTING_PRICE;
       durationDays = STANDARD_DURATION_DAYS;
       maxListings = STANDARD_MAX_LISTINGS;
       visibility = STANDARD_VISIBILITY;
+      isFeatured = false;
       break;
     case "premium":
       listingPrice = PREMIUM_LISTING_PRICE;
       durationDays = PREMIUM_DURATION_DAYS;
       maxListings = PREMIUM_MAX_LISTINGS;
       visibility = PREMIUM_VISIBILITY;
+      isFeatured = true;
       break;
     default:
       throw new Error("Invalid listing type");
@@ -42,7 +45,7 @@ const calculateListingDetails = (packageType) => {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + durationDays);
 
-  return { listingPrice, expiresAt, maxListings, visibility };
+  return { listingPrice, expiresAt, maxListings, visibility, isFeatured };
 };
 
 module.exports = { calculateListingDetails };
