@@ -39,8 +39,22 @@ app.use(express.json());
 app.use(cookieParser());
 // app.set("trust proxy", 1);
 // Session configuration
-app.use(
-  session({
+
+let sessionOptions;
+
+if (process.env.NODE_ENV === "production") {
+  sessionOptions = {
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongoUrl: process.env.MONGO_URL,
+      collectionName: "sessions",
+    }),
+    cookie: { secure: true, maxAge: 2592000000 },
+  };
+} else {
+  sessionOptions = {
     secret: "secret",
     resave: false,
     saveUninitialized: false,
@@ -49,8 +63,10 @@ app.use(
       collectionName: "sessions",
     }),
     cookie: { secure: false, maxAge: 2592000000 },
-  })
-);
+  };
+}
+
+app.use(session(sessionOptions));
 
 app.use(passport.initialize());
 app.use(passport.session());
