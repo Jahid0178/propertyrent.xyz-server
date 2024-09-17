@@ -44,6 +44,7 @@ const getAllPropertyListings = async (req, res) => {
       limit,
     })
       .populate("images", "url")
+      .populate("author", "fullName avatar")
       .sort({ createdAt: -1 });
 
     if (!properties) {
