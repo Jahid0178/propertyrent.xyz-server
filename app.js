@@ -51,7 +51,12 @@ if (process.env.NODE_ENV === "production") {
       mongoUrl: process.env.MONGO_URL,
       collectionName: "sessions",
     }),
-    cookie: { secure: true, maxAge: 2592000000 },
+    cookie: {
+      secure: true,
+      maxAge: 2592000000,
+      httpOnly: true,
+      sameSite: "none",
+    },
   };
 } else {
   sessionOptions = {
