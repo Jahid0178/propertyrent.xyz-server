@@ -66,27 +66,19 @@ const loginUser = async (req, res, next) => {
   })(req, res, next);
 };
 
-const logoutUser = async (req, res) => {
+const logoutUser = async (req, res, next) => {
   try {
-    // req.session.destroy(() => {
-    //   res.clearCookie("connect.sid");
-    //   return res.status(200).json({
-    //     message: "Logout successful",
-    //     status: 200,
-    //   });
-    // });
     req.logout((err) => {
       if (err) {
-        return res.status(500).json({ message: "Logout failed" });
-      } else {
-        return res.status(200).json({
-          message: "Logout successful",
-          status: 200,
-        });
+        return next(err);
       }
+
+      return res
+        .status(200)
+        .json({ status: 200, message: "Logout successful", user: null });
     });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({ message: "An error occurred during logout" });
   }
 };
 
