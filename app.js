@@ -27,23 +27,20 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://propertyrent-xyz.vercel.app",
+      "https://propertyrent-xyz-v2.vercel.app",
       "https://www.propertyrent.xyz",
       "http://www.propertyrent.xyz",
-      "https://whispering-astrix-zahidulhaque-b14536c1.koyeb.app",
-      "http://localhost:5173",
     ],
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(cookieParser());
-app.set("trust proxy", 1);
+// app.set("trust proxy", 1);
+
 // Session configuration
-
-let sessionOptions;
-
-if (process.env.NODE_ENV === "production") {
-  sessionOptions = {
+app.use(
+  session({
     secret: "secret",
     resave: false,
     saveUninitialized: false,
@@ -52,26 +49,12 @@ if (process.env.NODE_ENV === "production") {
       collectionName: "sessions",
     }),
     cookie: {
-      secure: true,
-      maxAge: 2592000000,
-      httpOnly: true,
-      sameSite: "none",
+      secure: false,
+      httpOnly: false,
+      maxAge: 1000 * 60 * 60 * 24,
     },
-  };
-} else {
-  sessionOptions = {
-    secret: "secret",
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({
-      mongoUrl: process.env.MONGO_URL,
-      collectionName: "sessions",
-    }),
-    cookie: { secure: false, maxAge: 2592000000 },
-  };
-}
-
-app.use(session(sessionOptions));
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
