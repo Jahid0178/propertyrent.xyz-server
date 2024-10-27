@@ -23,44 +23,34 @@ const PropertySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    currency: {
+    availableFor: {
       type: String,
-      required: true,
     },
     availableFrom: {
-      type: Date,
+      type: String,
       required: true,
     },
-    visibility: {
+    bedroom: {
       type: String,
-      enum: ["standard", "enhanced", "top-spot"],
-      default: "standard",
+      required: true,
+    },
+    bathroom: {
+      type: String,
+      required: true,
+    },
+    balcony: {
+      type: String,
+    },
+    floor: {
+      type: String,
+    },
+    size: {
+      type: String,
     },
     status: {
-      type: Boolean,
-      default: false,
-    },
-    address: {
-      street: {
-        type: String,
-        required: true,
-      },
-      city: {
-        type: String,
-        required: true,
-      },
-      upazilla: {
-        type: String,
-        required: true,
-      },
-      country: {
-        type: String,
-        required: true,
-      },
-      zipCode: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      enum: ["active", "inactive", "pending"],
+      default: "pending",
     },
     author: {
       type: Schema.Types.ObjectId,
@@ -70,65 +60,6 @@ const PropertySchema = new mongoose.Schema(
       type: [Schema.Types.ObjectId],
       ref: "Asset",
       default: [],
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    propertyDetails: {
-      propertyFeatures: {
-        propertySize: {
-          type: String,
-          required: true,
-        },
-        propertySizeUnit: {
-          type: String,
-          required: true,
-        },
-        numberOfBedrooms: {
-          type: String,
-          required: true,
-        },
-        numberOfBathrooms: {
-          type: String,
-          required: true,
-        },
-        numberOfDiningrooms: {
-          type: String,
-        },
-        numberOfGarage: {
-          type: String,
-        },
-        numberOfBalconies: {
-          type: String,
-        },
-        renovation: {
-          type: String,
-          required: true,
-        },
-        yearBuilt: {
-          type: String,
-          required: true,
-        },
-      },
-      propertyUtilities: {
-        gas: {
-          type: String,
-          required: true,
-        },
-        electricity: {
-          type: String,
-          required: true,
-        },
-        internet: {
-          type: String,
-          required: true,
-        },
-        water: {
-          type: String,
-          required: true,
-        },
-      },
     },
     views: {
       type: Number,
@@ -142,12 +73,43 @@ const PropertySchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    mapLocation: {
-      coordinates: [Number],
+    priceInformation: {
+      price: {
+        type: Number,
+        required: true,
+      },
+      priceUnit: {
+        type: String,
+        enum: ["Monthly", "Weekly", "Daily"],
+        default: "Monthly",
+      },
     },
-    expiresAt: {
-      type: Date,
-      required: true,
+    locationInformation: {
+      division: {
+        type: String,
+        required: true,
+      },
+      district: {
+        type: String,
+        required: true,
+      },
+      upazila: {
+        type: String,
+        required: true,
+      },
+      sectorNo: {
+        type: String,
+      },
+      roadNo: {
+        type: String,
+      },
+      houseNo: {
+        type: String,
+      },
+      shortAddress: {
+        type: String,
+        required: true,
+      },
     },
   },
   { timestamps: true }
