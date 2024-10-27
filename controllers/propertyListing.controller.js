@@ -116,33 +116,24 @@ const createPropertyListing = async (req, res) => {
       "packageTitle price currency packageType -_id"
     );
 
-    const { listingPrice, expiresAt, maxListings, visibility, isFeatured } =
-      calculateListingDetails(user?.package?.packageType);
+    // const { listingPrice, expiresAt, maxListings, visibility, isFeatured } =
+    //   calculateListingDetails(user?.package?.packageType);
 
-    if (user?.properties?.length >= maxListings) {
-      return res
-        .status(400)
-        .json({ message: "You have reached the maximum listings limit" });
-    }
+    // if (user?.properties?.length >= maxListings) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "You have reached the maximum listings limit" });
+    // }
 
     // Property unique id
     const puid = generateCustomId("PR");
 
     const modifyData = {
       puid,
-      ...rest,
       author: authorId,
       featuredType: "recent",
-      visibility,
-      status: true,
-      isFeatured,
-      expiresAt,
-      mapLocation: {
-        coordinates: [
-          body.mapLocation.coordinates[0],
-          body.mapLocation.coordinates[1],
-        ],
-      },
+      status: "pending",
+      ...rest,
     };
 
     const property = await Property.create(modifyData);
