@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const Property = require("../models/property.model");
 const createAsset = require("../services/asset.services");
 
 const getAllUsers = async (req, res) => {
