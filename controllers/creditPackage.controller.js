@@ -15,7 +15,7 @@ const getAllCreditPackages = async (req, res) => {
       message: "Get all credit packages",
       status: 200,
       count: allCreditPackages.length,
-      creditPackages: allCreditPackages,
+      data: allCreditPackages,
     });
   } catch (error) {
     console.log("error from get all credit packages", error);
@@ -40,7 +40,7 @@ const createCreditPackage = async (req, res) => {
     res.json({
       message: "Credit package created successfully",
       status: 200,
-      creditPackage: createdCreditPackage,
+      data: createdCreditPackage,
     });
   } catch (error) {
     console.log("error from create credit package", error);
