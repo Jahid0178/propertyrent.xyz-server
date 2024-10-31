@@ -3,17 +3,31 @@ const Schema = mongoose.Schema;
 
 const creditPackageSchema = new Schema(
   {
-    packageTitle: String,
-    packageType: {
+    id: {
       type: String,
-      enum: ["basic", "standard", "premium"],
-      lowercase: true,
+      unique: true,
+      required: true,
     },
-    price: Number,
-    currency: String,
-    features: [String],
-    description: String,
-    packageCode: String,
+    name: {
+      type: String,
+      required: true,
+    },
+    credit: {
+      type: Number,
+      required: true,
+    },
+    bonusCredits: {
+      type: Number,
+      required: true,
+    },
+    features: {
+      type: [String],
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

@@ -18,10 +18,9 @@ const PayoutSchema = new Schema(
       type: Number,
     },
     status: {
-      type: Boolean,
-    },
-    expiresAt: {
-      type: Date,
+      type: String,
+      default: "pending",
+      enum: ["pending", "active", "deactive", "failed", "cancelled"],
     },
   },
   {

@@ -16,7 +16,6 @@ const tranId = new mongoose.Types.ObjectId().toString();
 const handlePayout = async (req, res) => {
   try {
     const bodyData = req.body;
-
     if (!bodyData) {
       return res.status(400).json({
         status: 400,
@@ -33,23 +32,34 @@ const handlePayout = async (req, res) => {
       });
     }
 
+    const user = req.user;
+
+    if (!user) {
+      return res.status(404).json({
+        status: 404,
+        message: "User not found",
+      });
+    }
+
+    const userAddress = `${user.address.street}, ${user.address.city}, ${user.address.country}`;
+
     const initiateData = {
       total_amount: package.price,
-      currency: bodyData.currency,
+      currency: "BDT",
       tran_id: tranId, // use unique tran_id for each api call
-      success_url: `http://localhost:4000/payout/success/${tranId}/${bodyData.userId}/${bodyData.packageId}`,
-      fail_url: "http://localhost:3000/fail",
-      cancel_url: "http://localhost:3000/cancel",
-      ipn_url: "http://localhost:3000/ipn",
+      success_url: `${process.env.BACKEND_URL}/redirect-to?url=${process.env.CLIENT_URL}/dashboard/buy-credit/success/${tranId}/${user._id}/${bodyData.packageId}`,
+      fail_url: `${process.env.BACKEND_URL}/redirect-to?url=${process.env.CLIENT_URL}/fail`,
+      cancel_url: `${process.env.BACKEND_URL}/redirect-to?url=${process.env.CLIENT_URL}/cancel`,
+      ipn_url: `${process.env.BACKEND_URL}/redirect-to?url=${process.env.CLIENT_URL}/ipn`,
       shipping_method: "NO",
-      product_name: package.packageTitle,
+      product_name: package.name,
       product_category: "credit package",
       product_profile: "general",
-      cus_name: bodyData.fullName,
-      cus_email: bodyData.email,
-      address: bodyData.address,
-      cus_phone: bodyData.phone,
-      cus_fax: bodyData.phone,
+      cus_name: user.fullName,
+      cus_email: user.email,
+      address: userAddress,
+      cus_phone: user.phone,
+      cus_fax: user.phone,
     };
 
     const sslcz = new SSLCommerzPayment(store_id, store_pass, is_live);
@@ -78,24 +88,23 @@ const handleSuccessPayout = async (req, res) => {
     }
 
     await Payout.updateMany(
-      { userId: userId, status: true },
+      { userId, status: "active" },
       {
         $set: {
-          status: false,
+          status: "deactive",
         },
       }
     );
 
     const package = await CreditPackage.findById(packageId);
-    const { expiresAt } = calculateListingDetails(package.packageType);
+    // const { expiresAt } = calculateListingDetails(package.packageType);
 
     const payoutData = {
-      tranId: tranId,
-      userId: userId,
-      packageId: packageId,
+      tranId,
+      userId,
+      packageId,
       amount: package.price,
-      status: true,
-      expiresAt,
+      status: "active",
     };
 
     const payoutResponse = await Payout.create(payoutData);
@@ -103,7 +112,7 @@ const handleSuccessPayout = async (req, res) => {
     if (!payoutResponse) {
       return res.status(404).json({
         status: 404,
-        message: "Payout not found",
+        message: "Payout creation failed",
       });
     }
 
@@ -126,7 +135,11 @@ const handleSuccessPayout = async (req, res) => {
       });
     }
 
-    res.redirect(process.env.CLIENT_URL);
+    res.status(200).json({
+      status: 200,
+      message: "Payment success",
+      data: payoutResponse,
+    });
   } catch (error) {
     console.log("error from success payout", error);
   }
@@ -144,7 +157,10 @@ const getPayoutByUserId = async (req, res) => {
     }
 
     const payouts = await Payout.find({ userId: params?.userId })
-      .populate("packageId", "packageTitle")
+      .populate({
+        path: "packageId",
+        select: "name -_id",
+      })
       .sort({ createdAt: -1 });
 
     if (!payouts) {
@@ -166,23 +182,23 @@ const getPayoutByUserId = async (req, res) => {
 };
 
 // Deactive user payouts when they are expired
-cron.schedule("0 0 * * *", async () => {
-  try {
-    const now = new Date();
-    await Payout.updateMany(
-      {
-        expiresAt: { $lt: now },
-        status: true,
-      },
-      {
-        $set: {
-          status: false,
-        },
-      }
-    );
-  } catch (error) {
-    console.log("payout error", error);
-  }
-});
+// cron.schedule("0 0 * * *", async () => {
+//   try {
+//     const now = new Date();
+//     await Payout.updateMany(
+//       {
+//         expiresAt: { $lt: now },
+//         status: true,
+//       },
+//       {
+//         $set: {
+//           status: false,
+//         },
+//       }
+//     );
+//   } catch (error) {
+//     console.log("payout error", error);
+//   }
+// });
 
 module.exports = { handlePayout, handleSuccessPayout, getPayoutByUserId };
