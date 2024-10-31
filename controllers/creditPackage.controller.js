@@ -63,7 +63,7 @@ const getCreditPackageById = async (req, res) => {
     res.json({
       message: "Get credit package",
       status: 200,
-      creditPackage,
+      data: creditPackage,
     });
   } catch (error) {
     console.log("error from get credit package by id", error);
