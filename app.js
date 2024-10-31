@@ -88,6 +88,11 @@ app.use("/contact", contactRoute);
 app.use("/credit-package", creditPackageRoute);
 app.use("/payout", payoutRoute);
 
+// Redirect
+app.post("/redirect-to", (req, res) => {
+  res.redirect(req.query.url);
+});
+
 // Error route
 app.use((req, res) => {
   res.status(404).json({
