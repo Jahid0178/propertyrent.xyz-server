@@ -4,7 +4,7 @@ const passport = require("passport");
 
 const registerUser = async (req, res) => {
   try {
-    const { phone, password, username, ...rest } = req.body;
+    const { phone, password, userName, ...rest } = req.body;
     const isExistUser = await User.findOne({ phone }).exec();
 
     if (isExistUser) {
@@ -13,7 +13,8 @@ const registerUser = async (req, res) => {
         .json({ message: "User already exists", status: 400 });
     }
 
-    const existingUserName = await User.findOne({ username }).exec();
+    const existingUserName = await User.findOne({ userName }).exec();
+
     if (existingUserName) {
       return res.status(400).json({ message: "Username already exists" });
     }
@@ -25,7 +26,7 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       ...rest,
       avatar: null,
-      username,
+      userName,
       role: "user",
       credit: 0,
       balance: 0,
