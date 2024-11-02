@@ -3,8 +3,7 @@ const User = require("../models/user");
 const createAsset = require("../services/asset.services");
 const generateCustomId = require("../utils/generateCustomId");
 const paginatedResult = require("../utils/paginatedResult");
-const { calculateListingDetails } = require("../utils/listingUtils");
-const cron = require("node-cron");
+const { CREDIT_DEDUCTION_AMOUNT } = require("../constant/constant");
 
 const getAllPropertyListings = async (req, res) => {
   try {
@@ -116,14 +115,12 @@ const createPropertyListing = async (req, res) => {
       "packageTitle price currency packageType -_id"
     );
 
-    // const { listingPrice, expiresAt, maxListings, visibility, isFeatured } =
-    //   calculateListingDetails(user?.package?.packageType);
-
-    // if (user?.properties?.length >= maxListings) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "You have reached the maximum listings limit" });
-    // }
+    // Checking deducting credit
+    if (user.credit < CREDIT_DEDUCTION_AMOUNT) {
+      return res
+        .status(400)
+        .json({ message: "Insufficient credit", status: 400 });
+    }
 
     // Property unique id
     const puid = generateCustomId("PR");
@@ -140,6 +137,10 @@ const createPropertyListing = async (req, res) => {
     if (!property) {
       res.status(400).json({ message: "Property not created" });
     }
+
+    // Deduct credit
+    user.credit -= CREDIT_DEDUCTION_AMOUNT;
+    await user.save();
 
     await property.save();
 
@@ -348,22 +349,6 @@ const getPropertyByLocation = async (req, res) => {
     console.log("Property query error", error);
   }
 };
-
-// Status change when property is expired
-cron.schedule("0 0 * * *", async () => {
-  const now = new Date();
-  await Property.updateMany(
-    {
-      status: true,
-      expiresAt: { $lt: now },
-    },
-    {
-      $set: {
-        status: false,
-      },
-    }
-  );
-});
 
 module.exports = {
   getAllPropertyListings,
