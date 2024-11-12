@@ -35,6 +35,9 @@ const userSchema = new mongoose.Schema(
     balance: Number,
     googleId: String,
     properties: [{ type: mongoose.Types.ObjectId, ref: "Property" }],
+    unlockedProperties: [
+      { type: mongoose.Types.ObjectId, ref: "Property", default: [] },
+    ],
     isEmailVerified: {
       type: Boolean,
       default: false,

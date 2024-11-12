@@ -3,8 +3,7 @@ const User = require("../models/user");
 const createAsset = require("../services/asset.services");
 const generateCustomId = require("../utils/generateCustomId");
 const paginatedResult = require("../utils/paginatedResult");
-const { calculateListingDetails } = require("../utils/listingUtils");
-const cron = require("node-cron");
+const { UNLOCKED_LISTING_CREDIT } = require("../constant/constant");
 
 const getAllPropertyListings = async (req, res) => {
   try {
@@ -95,10 +94,31 @@ const getPropertyById = async (req, res) => {
 
     await property.save();
 
+    if (!req.user) {
+      return res.json({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (property.author._id.toString() === user._id.toString()) {
+      return res.status(403).json({
+        message: "You cannot unlock your own property",
+        status: 403,
+        property,
+        isUnlocked: true,
+      });
+    }
+
+    const isUnlocked = user.unlockedProperties.includes(propertyId);
+
     res.status(200).json({
       message: "Property fetched successfully",
       status: 200,
       property,
+      isUnlocked,
     });
   } catch (error) {
     console.log("property fetching error", error);
@@ -349,21 +369,61 @@ const getPropertyByLocation = async (req, res) => {
   }
 };
 
-// Status change when property is expired
-cron.schedule("0 0 * * *", async () => {
-  const now = new Date();
-  await Property.updateMany(
-    {
-      status: true,
-      expiresAt: { $lt: now },
-    },
-    {
-      $set: {
-        status: false,
-      },
+// unlocked property
+const unlockedProperty = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const property = await Property.findById({ _id: id }).populate({
+      path: "author",
+      select: "fullName phone -_id",
+    });
+
+    if (!property) {
+      return res.status(404).json({
+        message: "Property not found",
+        status: 404,
+      });
     }
-  );
-});
+
+    const user = await req.user;
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    if (user.credit < UNLOCKED_LISTING_CREDIT) {
+      return res.status(404).json({
+        message: "Insufficient credit, Please buy more credits",
+        status: 404,
+      });
+    }
+
+    if (property.author.toString() === user._id.toString()) {
+      return res.status(403).json({
+        message: "You cannot unlock your own property",
+        status: 403,
+      });
+    }
+
+    user.credit -= UNLOCKED_LISTING_CREDIT;
+
+    user.unlockedProperties.push(id);
+
+    await user.save();
+
+    res.json({
+      message: "Property unlocked successfully",
+      status: 200,
+      isUnlocked: true,
+    });
+  } catch (error) {
+    console.log("unlocked property error", error);
+  }
+};
 
 module.exports = {
   getAllPropertyListings,
@@ -375,4 +435,5 @@ module.exports = {
   getRecentProperty,
   getPropertyByLocation,
   uploadPropertyListingImages,
+  unlockedProperty,
 };

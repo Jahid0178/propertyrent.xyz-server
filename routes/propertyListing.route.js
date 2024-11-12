@@ -11,6 +11,7 @@ const {
   getRecentProperty,
   getPropertyByLocation,
   uploadPropertyListingImages,
+  unlockedProperty,
 } = require("../controllers/propertyListing.controller");
 
 router.get("/", getAllPropertyListings);
@@ -22,5 +23,6 @@ router.get("/featured", getFeaturedProperty);
 router.get("/recent", getRecentProperty);
 router.get("/search/:city/:upazilla?", getPropertyByLocation);
 router.get("/:id", getPropertyById);
+router.post("/:id/unlock", unlockedProperty);
 
 module.exports = router;
