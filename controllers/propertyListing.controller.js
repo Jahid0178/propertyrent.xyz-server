@@ -98,6 +98,8 @@ const getPropertyById = async (req, res) => {
       return res.json({
         message: "User not found",
         status: 404,
+        property,
+        isUnlocked: false,
       });
     }
 
