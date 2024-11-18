@@ -107,4 +107,36 @@ const uploadUserAvatar = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, getUserById, updateUserById, uploadUserAvatar };
+const getUserUnlockedProperty = async (req, res) => {
+  try {
+    const user = await req.user;
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    const unlockedProperties = await Property.find({
+      _id: { $in: user.unlockedProperties },
+    }).populate("images", "url");
+
+    res.status(200).json({
+      message: "Unlocked properties fetched successfully",
+      status: 200,
+      count: unlockedProperties.length,
+      data: unlockedProperties,
+    });
+  } catch (error) {
+    console.log("get user unlocked property error", error);
+  }
+};
+
+module.exports = {
+  getAllUsers,
+  getUserById,
+  updateUserById,
+  uploadUserAvatar,
+  getUserUnlockedProperty,
+};
